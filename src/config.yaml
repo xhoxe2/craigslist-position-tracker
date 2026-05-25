@@ -1,0 +1,41 @@
+# Конфигурация трекера позиций Craigslist
+#
+# Каждая запись queries[] = один поисковый запрос менеджера.
+# tracked_listings = объявления, чьи позиции нужно фиксировать
+# (id берётся из URL объявления: /d/.../<id>.html либо post_id в ссылке).
+
+run:
+  # Сколько страниц выдачи проверять максимум (Craigslist обычно 120 результатов/страница)
+  max_pages: 3
+  # Задержка между переходами между страницами, секунды (анти-бан)
+  page_delay_sec: [3, 7]
+  # User-Agent эмуляции
+  user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+  # Использовать прокси? Если да, задаются через ENV: PROXY_SERVER, PROXY_USER, PROXY_PASS
+  use_proxy: false
+  headless: true
+
+queries:
+  - city: newyork
+    section: sss            # sss = for sale, ggg = gigs, sof = software jobs и т.д.
+    keyword: "iphone 15 pro"
+    # Объявления, которые мы постим и чьи позиции отслеживаем
+    tracked_listings:
+      - id: "7700000001"
+        title_contains: "iPhone 15 Pro 256GB Unlocked"
+      - id: "7700000002"
+        title_contains: "iPhone 15 Pro Max"
+
+  - city: losangeles
+    section: sss
+    keyword: "macbook pro m3"
+    tracked_listings:
+      - id: "7700000010"
+        title_contains: "MacBook Pro 14 M3"
+
+  - city: chicago
+    section: sss
+    keyword: "office chair herman miller"
+    tracked_listings:
+      - id: "7700000020"
+        title_contains: "Herman Miller Aeron Size B"

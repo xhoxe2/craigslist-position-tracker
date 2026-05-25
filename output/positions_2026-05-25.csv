@@ -1,0 +1,5 @@
+run_date,city,keyword,listing_id,listing_title,position,page,url,total_seen
+2026-05-25,newyork,iphone 15 pro,7700000001,iPhone 15 Pro 256GB Unlocked — Like New,6,1,https://newyork.craigslist.org/d/sample/7700000001.html,360
+2026-05-25,newyork,iphone 15 pro,7700000002,iPhone 15 Pro Max 512GB Titanium Blue,12,1,https://newyork.craigslist.org/d/sample/7700000002.html,360
+2026-05-25,losangeles,macbook pro m3,7700000010,MacBook Pro 14 M3 16GB 512GB Space Black,8,1,https://losangeles.craigslist.org/d/sample/7700000010.html,360
+2026-05-25,chicago,office chair herman miller,7700000020,Herman Miller Aeron Size B Fully Loaded,5,1,https://chicago.craigslist.org/d/sample/7700000020.html,360

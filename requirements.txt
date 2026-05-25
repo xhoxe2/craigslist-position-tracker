@@ -1,0 +1,7 @@
+playwright>=1.46
+pyyaml>=6.0
+# опционально, если хочется лить сразу в Google Sheets:
+google-api-python-client>=2.0
+google-auth>=2.0
+google-auth-httplib2>=0.2
+google-auth-oauthlib>=1.0
