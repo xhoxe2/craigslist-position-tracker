@@ -14,8 +14,9 @@
 |---|---|
 | [`src/tracker.py`](src/tracker.py) | Headless-браузер (Playwright + Chromium) → US-прокси → проходить N сторінок видачі Craigslist → знаходить наші оголошення → пише позиції в CSV |
 | [`src/weekly_report.py`](src/weekly_report.py) | Бере дневні CSV за тиждень → агрегує (avg / best / worst / delta / days_missing) → недільна зведена таблиця |
+| [`src/ai_summary.py`](src/ai_summary.py) | **AI-шар.** Бере `weekly_report.csv` → Claude → human-readable звіт з 2-4 конкретними рекомендаціями менеджеру. ~$0.001 за запуск на Haiku |
 | [`src/config.yaml`](src/config.yaml) | Декларативний список запитів і наших оголошень (id + title_contains для матчингу) |
-| [`src/generate_sample.py`](src/generate_sample.py) | Генерує демо-дані за 7 днів — щоб weekly_report можна було подивитися без US-IP |
+| [`src/generate_sample.py`](src/generate_sample.py) | Генерує демо-дані за 7 днів — щоб weekly_report + ai_summary можна було подивитися без US-IP |
 | [`output/`](output/) | Готові CSV: 7 щоденних + `weekly_report.csv` |
 | [`docs/architecture.md`](docs/architecture.md) | Концепція повної системи + ризики + наступні кроки |
 
@@ -44,30 +45,35 @@ flowchart LR
 
 ---
 
-## Запуск локально
+## Запустити за 30 секунд (без US IP, без API-ключа)
 
 ```bash
-# 1. Залежності
+git clone https://github.com/xhoxe2/craigslist-position-tracker
+cd craigslist-position-tracker
 python3 -m venv .venv && source .venv/bin/activate
+pip install pyyaml          # тільки це і потрібно для sample + report
+
+python src/generate_sample.py     # 7 щоденних CSV у output/
+python -m src.weekly_report       # output/weekly_report.csv
+cat output/weekly_summary.txt     # готовий AI-summary (вже в репо)
+```
+
+## Запустити повністю (зі скрейпінгом і AI)
+
+```bash
 pip install -r requirements.txt
 playwright install chromium
+cp .env.example .env  # відредагуй: PROXY_SERVER (US residential)
 
-# 2. (опційно) прокси
-cp .env.example .env  # відредагуй
-
-# 3. Реальний прогін
+# Реальний прогін на Craigslist
 python -m src.tracker --config src/config.yaml
 
-# 4. Тижневий звіт із дньних CSV
-python -m src.weekly_report --in-dir output --out output/weekly_report.csv
+# AI-сумарі тижня
+export ANTHROPIC_API_KEY=sk-ant-...
+python -m src.ai_summary
 ```
 
-Без US-прокси скрипт працювати **буде** (запуск, парсинг, CSV) — але Craigslist або поверне 403, або підсуне капчу. Тому в репо лежить [`src/generate_sample.py`](src/generate_sample.py): генерує реалістичні позиції за тиждень, щоб можна було побачити, як виглядає вивід.
-
-```bash
-python src/generate_sample.py            # створить 7 файлів у output/
-python -m src.weekly_report              # збере недільну зведену
-```
+Без US-прокси `tracker.py` все одно запуститься (це перевірено — є скрин у [`assets/`](assets/)), але Craigslist поверне сторінку "Your request has been blocked". CSV буде з усіма `position=""` (не знайдено) — без падіння.
 
 ---
 
