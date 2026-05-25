@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Supplax Automation Review Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Supplax test task</p>
+        <h1>Automation Review Demo</h1>
+      </div>
+      <nav class="top-actions" aria-label="Artifacts">
+        <a href="../Supplax_test_task_Valentyn_Petruk.pdf">PDF</a>
+        <a href="https://github.com/xhoxe2/craigslist-position-tracker">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="summary-strip" aria-label="Submission summary">
+        <article>
+          <span>Part 1</span>
+          <strong>RAG assistant case</strong>
+          <small>Question intake, retrieval, relevance gate, answer with sources.</small>
+        </article>
+        <article>
+          <span>Part 2</span>
+          <strong>Craigslist tracker</strong>
+          <small>Configurable scan, position table, weekly report, manager summary.</small>
+        </article>
+        <article>
+          <span>MVP</span>
+          <strong>Python + Playwright + CSV</strong>
+          <small>Real code is in <code>src/</code>; this page is a safe browser sandbox.</small>
+        </article>
+      </section>
+
+      <div class="tabs" role="tablist" aria-label="Demo sections">
+        <button class="tab is-active" id="tab-case" type="button" role="tab" aria-selected="true" aria-controls="panel-case">Part 1: RAG case</button>
+        <button class="tab" id="tab-tracker" type="button" role="tab" aria-selected="false" aria-controls="panel-tracker">Part 2: Craigslist tracker</button>
+      </div>
+
+      <section class="panel is-active" id="panel-case" role="tabpanel" aria-labelledby="tab-case">
+        <div class="workspace two-col">
+          <section class="tool-surface" aria-labelledby="rag-title">
+            <div class="section-title">
+              <p class="eyebrow">Knowledge assistant sandbox</p>
+              <h2 id="rag-title">Ask the internal base</h2>
+            </div>
+
+            <label for="rag-question">Question</label>
+            <textarea id="rag-question" rows="5">Як зробити безпечний деплой WooCommerce-проєкту без падіння кошика?</textarea>
+
+            <div class="chips" aria-label="Example questions">
+              <button type="button" data-question="Де описана схема ACF-полів для проекту Z?">ACF fields</button>
+              <button type="button" data-question="Як зробити безпечний деплой WooCommerce-проєкту без падіння кошика?">Woo deploy</button>
+              <button type="button" data-question="Де знайти staging credentials для нового розробника?">Staging access</button>
+              <button type="button" data-question="Що ми робили з проектом X у 2023?">Low confidence</button>
+            </div>
+
+            <div class="form-row">
+              <label class="select-label" for="rag-threshold">Relevance gate</label>
+              <select id="rag-threshold">
+                <option value="0.68">Balanced 68%</option>
+                <option value="0.8">Strict 80%</option>
+                <option value="0.45">Lenient 45%</option>
+              </select>
+              <button class="primary" id="rag-run" type="button">Search base</button>
+            </div>
+          </section>
+
+          <aside class="insight-panel" aria-label="Part 1 metrics">
+            <h2>Case metrics</h2>
+            <div class="metric-grid">
+              <div><span>Questions/week</span><strong>38 -> 24</strong></div>
+              <div><span>Senior time</span><strong>-2h/week</strong></div>
+              <div><span>Positive feedback</span><strong>78%</strong></div>
+              <div><span>LLM cost</span><strong>~$4 / 2 weeks</strong></div>
+            </div>
+            <p class="note">The interaction below mirrors the original MVP: retrieve chunks, score relevance, answer only when sources are good enough.</p>
+          </aside>
+        </div>
+
+        <section class="result-grid" aria-label="RAG result">
+          <article class="result-main">
+            <div class="result-head">
+              <h2>Assistant answer</h2>
+              <span class="status-pill" id="rag-status">Ready</span>
+            </div>
+            <p id="rag-answer">Run a query to see the simulated answer.</p>
+          </article>
+          <article class="result-side">
+            <h2>Retrieved sources</h2>
+            <ol class="source-list" id="rag-sources"></ol>
+          </article>
+        </section>
+      </section>
+
+      <section class="panel" id="panel-tracker" role="tabpanel" aria-labelledby="tab-tracker" hidden>
+        <div class="workspace split">
+          <section class="tool-surface" aria-labelledby="tracker-title">
+            <div class="section-title">
+              <p class="eyebrow">Position tracker sandbox</p>
+              <h2 id="tracker-title">Run a Craigslist scan</h2>
+            </div>
+
+            <div class="form-grid">
+              <div>
+                <label for="city">City</label>
+                <select id="city">
+                  <option value="newyork">newyork</option>
+                  <option value="losangeles">losangeles</option>
+                  <option value="chicago">chicago</option>
+                  <option value="sfbay">sfbay</option>
+                </select>
+              </div>
+              <div>
+                <label for="section">Section</label>
+                <select id="section">
+                  <option value="sss">for sale (sss)</option>
+                  <option value="sof">software jobs (sof)</option>
+                  <option value="ggg">gigs (ggg)</option>
+                </select>
+              </div>
+              <div>
+                <label for="keyword">Keyword</label>
+                <input id="keyword" value="iphone 15 pro" />
+              </div>
+              <div>
+                <label for="max-pages">Max pages</label>
+                <input id="max-pages" type="number" min="1" max="5" value="3" />
+              </div>
+            </div>
+
+            <label for="listings">Tracked listings: one per line, format <code>id | title contains</code></label>
+            <textarea id="listings" rows="5">7700000001 | iPhone 15 Pro 256GB Unlocked
+7700000002 | iPhone 15 Pro Max
+7700000099 | missing sample listing</textarea>
+
+            <div class="switch-row">
+              <label class="switch">
+                <input id="proxy-enabled" type="checkbox" checked />
+                <span>US residential proxy</span>
+              </label>
+              <button class="primary" id="scan-run" type="button">Run scan</button>
+            </div>
+          </section>
+
+          <aside class="insight-panel" aria-label="Risk preview">
+            <h2>Risk preview</h2>
+            <p class="note">Switch off the proxy toggle to reproduce the blocked-state branch used by the real scraper.</p>
+            <figure class="blocked-shot">
+              <img src="../assets/craigslist_from_ua_ip.png" alt="Craigslist blocked response from a non-US IP" />
+              <figcaption>Non-US IP returns a blocked page. Production needs a US residential proxy.</figcaption>
+            </figure>
+          </aside>
+        </div>
+
+        <section class="table-card" aria-label="Scan results">
+          <div class="result-head">
+            <h2>Position snapshot</h2>
+            <span class="status-pill" id="scan-status">Ready</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>City</th>
+                  <th>Keyword</th>
+                  <th>Listing ID</th>
+                  <th>Position</th>
+                  <th>Page</th>
+                  <th>Total seen</th>
+                </tr>
+              </thead>
+              <tbody id="scan-rows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="result-grid" aria-label="Weekly report">
+          <article class="result-main">
+            <div class="result-head">
+              <h2>Weekly manager summary</h2>
+              <button class="secondary" id="weekly-run" type="button">Generate weekly report</button>
+            </div>
+            <p id="weekly-summary">Run a scan, then generate a weekly report.</p>
+          </article>
+          <article class="result-side">
+            <h2>Aggregates</h2>
+            <div class="mini-table" id="weekly-rows"></div>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -5,6 +5,7 @@
 > Це **тестове завдання для Supplax (AI Automation / AI Engineer)**, Частина 2.
 > Кейс із власного досвіду (Частина 1) — див. [docs/case1_rag_assistant.md](docs/case1_rag_assistant.md).
 > Фінальний PDF для здачі — [`Supplax_test_task_Valentyn_Petruk.pdf`](Supplax_test_task_Valentyn_Petruk.pdf).
+> Інтерактивне browser-demo для ревʼю: [`demo/index.html`](demo/index.html) або [відкрити онлайн](https://raw.githack.com/xhoxe2/craigslist-position-tracker/main/demo/index.html).
 
 ---
 
@@ -17,6 +18,7 @@
 | [`src/ai_summary.py`](src/ai_summary.py) | **AI-шар.** Бере `weekly_report.csv` → Gemini (`gemini-flash-latest`) → human-readable звіт з 2-4 конкретними рекомендаціями менеджеру. ~$0.001 за запуск |
 | [`src/config.yaml`](src/config.yaml) | Декларативний список запитів і наших оголошень (id + title_contains для матчингу) |
 | [`src/generate_sample.py`](src/generate_sample.py) | Генерує демо-дані за 7 днів — щоб weekly_report + ai_summary можна було подивитися без US-IP |
+| [`demo/index.html`](demo/index.html) | Інтерактивний browser-demo: Part 1 RAG sandbox + Part 2 Craigslist tracker sandbox |
 | [`output/`](output/) | Готові CSV: 7 щоденних + `weekly_report.csv` |
 | [`docs/architecture.md`](docs/architecture.md) | Концепція повної системи + ризики + наступні кроки |
 
