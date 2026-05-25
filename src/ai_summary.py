@@ -1,16 +1,16 @@
 """
-AI-сумарі тижневого звіту: бере weekly_report.csv → передає в Claude → отримує
-human-readable параграф українською з конкретними рекомендаціями для менеджера.
+AI-сумарі тижневого звіту: бере weekly_report.csv → передає в Gemini → отримує
+human-readable звіт українською з 2-4 конкретними рекомендаціями для менеджера.
 
-Це другий шар автоматизації поверх скрейпера. Сам по собі скрейпер видає таблицю
-цифр, але менеджер хоче бачити "що з цим робити" — це і робить LLM.
+Це другий шар автоматизації поверх скрейпера. Сам по собі скрейпер видає
+таблицю цифр, але менеджер хоче бачити "що з цим робити". Це і робить LLM.
 
 Запуск:
-  export ANTHROPIC_API_KEY=sk-ant-...
+  export GEMINI_API_KEY=...
   python -m src.ai_summary --in output/weekly_report.csv --out output/weekly_summary.txt
 
-Якщо ключа немає — скрипт виведе текст промпту, який буде відправлено в LLM
-(для review). Готовий приклад виводу лежить у output/weekly_summary.txt.
+Якщо ключа немає — скрипт у --dry-run режимі покаже промпт, який буде
+відправлено в LLM. Готовий sample-вивід лежить у output/weekly_summary.txt.
 """
 from __future__ import annotations
 
@@ -62,33 +62,43 @@ def load_rows(csv_path: Path) -> list[dict]:
         return list(csv.DictReader(f))
 
 
-def call_claude(system: str, user: str, model: str = "claude-haiku-4-5-20251001") -> str:
-    """Викликає Anthropic API. Якщо anthropic не встановлений — підказує як поставити."""
+def call_gemini(system: str, user: str, model: str = "gemini-flash-latest") -> str:
+    """Викликає Google Gemini API. Ключ читається з GEMINI_API_KEY.
+
+    Примітка: Gemini 2.5+ моделі за замовчуванням мають "thinking" режим, який
+    з'їдає вихідний токен-бюджет до того, як з'явиться текст. Тому ставимо
+    достатньо великий ліміт або вимикаємо thinking явно.
+    """
     try:
-        from anthropic import Anthropic
+        from google import genai
+        from google.genai import types
     except ImportError:
         print(
-            "[!] anthropic не встановлений. Запусти:\n    pip install anthropic",
+            "[!] google-genai не встановлений. Запусти:\n    pip install google-genai",
             file=sys.stderr,
         )
         raise
 
-    client = Anthropic()  # читає ANTHROPIC_API_KEY з ENV
-    msg = client.messages.create(
+    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    response = client.models.generate_content(
         model=model,
-        max_tokens=800,
-        system=system,
-        messages=[{"role": "user", "content": user}],
+        contents=user,
+        config=types.GenerateContentConfig(
+            system_instruction=system,
+            temperature=0.4,
+            max_output_tokens=4096,
+            thinking_config=types.ThinkingConfig(thinking_budget=0),
+        ),
     )
-    return "".join(block.text for block in msg.content if hasattr(block, "text"))
+    return response.text or ""
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--in", dest="inp", type=Path, default=Path("output/weekly_report.csv"))
     ap.add_argument("--out", type=Path, default=Path("output/weekly_summary.txt"))
-    ap.add_argument("--model", default="claude-haiku-4-5-20251001",
-                    help="Anthropic model id (haiku = дешевий, sonnet = якісніший)")
+    ap.add_argument("--model", default="gemini-flash-latest",
+                    help="Gemini model id (flash-latest = швидкий/дешевий, pro-latest = якісніший)")
     ap.add_argument("--dry-run", action="store_true",
                     help="Не викликати API — тільки показати prompt")
     args = ap.parse_args()
@@ -96,17 +106,18 @@ def main() -> int:
     rows = load_rows(args.inp)
     user_prompt = build_user_prompt(rows)
 
-    if args.dry_run or not os.getenv("ANTHROPIC_API_KEY"):
+    if args.dry_run or not os.getenv("GEMINI_API_KEY"):
         out = (
             "=== SYSTEM ===\n" + SYSTEM_PROMPT + "\n\n"
             "=== USER ===\n" + user_prompt + "\n\n"
-            "[i] ANTHROPIC_API_KEY не виставлено або --dry-run.\n"
-            " Це prompt, який буде відправлено в Claude. Готовий sample-вивід — у output/weekly_summary.txt]"
+            "[i] GEMINI_API_KEY не виставлено або --dry-run.\n"
+            "    Це prompt, який буде відправлено в Gemini.\n"
+            "    Готовий sample-вивід — у output/weekly_summary.txt"
         )
         print(out)
         return 0
 
-    summary = call_claude(SYSTEM_PROMPT, user_prompt, model=args.model)
+    summary = call_gemini(SYSTEM_PROMPT, user_prompt, model=args.model)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(summary + "\n", encoding="utf-8")
     print(summary)

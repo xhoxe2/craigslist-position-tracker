@@ -14,7 +14,7 @@
 |---|---|
 | [`src/tracker.py`](src/tracker.py) | Headless-браузер (Playwright + Chromium) → US-прокси → проходить N сторінок видачі Craigslist → знаходить наші оголошення → пише позиції в CSV |
 | [`src/weekly_report.py`](src/weekly_report.py) | Бере дневні CSV за тиждень → агрегує (avg / best / worst / delta / days_missing) → недільна зведена таблиця |
-| [`src/ai_summary.py`](src/ai_summary.py) | **AI-шар.** Бере `weekly_report.csv` → Claude → human-readable звіт з 2-4 конкретними рекомендаціями менеджеру. ~$0.001 за запуск на Haiku |
+| [`src/ai_summary.py`](src/ai_summary.py) | **AI-шар.** Бере `weekly_report.csv` → Gemini (`gemini-flash-latest`) → human-readable звіт з 2-4 конкретними рекомендаціями менеджеру. ~$0.001 за запуск |
 | [`src/config.yaml`](src/config.yaml) | Декларативний список запитів і наших оголошень (id + title_contains для матчингу) |
 | [`src/generate_sample.py`](src/generate_sample.py) | Генерує демо-дані за 7 днів — щоб weekly_report + ai_summary можна було подивитися без US-IP |
 | [`output/`](output/) | Готові CSV: 7 щоденних + `weekly_report.csv` |
@@ -68,8 +68,8 @@ cp .env.example .env  # відредагуй: PROXY_SERVER (US residential)
 # Реальний прогін на Craigslist
 python -m src.tracker --config src/config.yaml
 
-# AI-сумарі тижня
-export ANTHROPIC_API_KEY=sk-ant-...
+# AI-сумарі тижня (отримати ключ безкоштовно: https://aistudio.google.com)
+export GEMINI_API_KEY=...
 python -m src.ai_summary
 ```
 
