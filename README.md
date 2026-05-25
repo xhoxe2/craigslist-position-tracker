@@ -5,7 +5,7 @@
 > Це **тестове завдання для Supplax (AI Automation / AI Engineer)**, Частина 2.
 > Кейс із власного досвіду (Частина 1) — див. [docs/case1_rag_assistant.md](docs/case1_rag_assistant.md).
 > Фінальний PDF для здачі — [`Supplax_test_task_Valentyn_Petruk.pdf`](Supplax_test_task_Valentyn_Petruk.pdf).
-> Інтерактивне browser-demo для ревʼю: [`demo/index.html`](demo/index.html) або [відкрити онлайн](https://raw.githack.com/xhoxe2/craigslist-position-tracker/main/demo/index.html).
+> Інтерактивне browser-demo для ревʼю: [`demo/index.html`](demo/index.html) або [відкрити онлайн](https://htmlpreview.github.io/?https://raw.githubusercontent.com/xhoxe2/craigslist-position-tracker/main/demo/index.html).
 
 ---
 
