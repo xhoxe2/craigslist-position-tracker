@@ -4,7 +4,7 @@
 
 > Це **тестове завдання для Supplax (AI Automation / AI Engineer)**, Частина 2.
 > Кейс із власного досвіду (Частина 1) — див. [docs/case1_rag_assistant.md](docs/case1_rag_assistant.md).
-> PDF-версії обох документів — у директорії [`pdfs/`](../pdfs).
+> Фінальний PDF для здачі — [`Supplax_test_task_Valentyn_Petruk.pdf`](Supplax_test_task_Valentyn_Petruk.pdf).
 
 ---
 
@@ -113,7 +113,7 @@ python -m src.ai_summary
 ## Що я свідомо НЕ зробив у MVP (і чому)
 
 - **Інтеграція Google Sheets.** Код-стаб є в `requirements.txt`, але я залишив CSV — він простіший для review і повністю замінюваний. Перехід — ~30 рядків через `googleapiclient.discovery.build("sheets", "v4")`.
-- **LLM-сумарі тижня.** Це наступний крок: взяти `weekly_report.csv` + контекст ("ми постимо ці категорії"), віддати в Claude / GPT-4o-mini → отримати 1-параграфний human-readable summary з рекомендаціями. Свідомо не робив у MVP, бо ТЗ просить **найдоцільніший стартовий фрагмент** — а це сам скрейпер.
+- **Production-розсилка AI-сумарі.** Локальний скрипт `src/ai_summary.py` вже є і показує, як CSV перетворюється на human-readable рекомендації через Gemini. У production я б додав автоматичний weekly-run, логування якості перших запусків і доставку в Telegram / Google Sheets. Свідомо не робив повну delivery-інтеграцію в MVP, бо найдоцільніший стартовий фрагмент — сам скрейпер + тижнева агрегація.
 - **Antidetect browser (Playwright stealth).** Поки rate-limit низький і прокси residential — не потрібно. Додаємо, коли блокують.
 
 ---

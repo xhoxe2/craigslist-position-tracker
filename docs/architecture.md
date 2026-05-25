@@ -40,7 +40,7 @@ flowchart TB
     cron --> trk
     trk[tracker.py] --> store[(SQLite або<br/>Google Sheets)]
     store --> agg[weekly_report.py]
-    agg --> ai[AI summary<br/>Claude / GPT-4o-mini]
+    agg --> ai[AI summary<br/>Gemini / GPT / Claude]
     ai --> tg[Telegram channel:<br/>тижнева зведена<br/>+ алерти на падіння]
     ai --> sh[Sheets dashboard<br/>з графіками]
 ```
